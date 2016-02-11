@@ -113,6 +113,9 @@ function showMain(){
 					$('#divmantisuj').addClass('tabinactive');
 					$('#divmantisuj').removeClass('tabactive');
 					$('#divmantisregi').removeClass('tabinactive');
+					$('#bmantisquery').click(function(){
+						mantisQuery();
+					});					
 				});
 			
 			});
@@ -134,7 +137,7 @@ function mantis_newbug (){
 					start = $(this).attr('start');
 					taskdesc = $('#desc'+taskid).html();
 					togglPar = {'taskId':taskid};
-					mantisPar = {'uid':uid,'pid':pid,'desc':taskdesc,'durms':durationms,'start':start,'month':month};
+					mantisPar = {'uid':uid,'pid':pid,'desc':taskdesc,'durms':durationms,'start':start,'month':month,'note':''};
 					ajaxCall(fn,{'togglPar':togglPar,'mantisPar':mantisPar},true, fn);
 				});
 
@@ -167,17 +170,41 @@ function mantis_newbug_with_note (){
 				mantisPar = {'uid':uid,'pid':pid,'desc':mantisDesc,'durms':durationms,'start':start,'month':month,'note':note};
 				togglPar = {'taskIds':taskIds,'togglDesc':noteToggl};
 				ajaxCall(fn,{'togglPar':togglPar,'mantisPar':mantisPar},true, fn);
-
-
-				
-			
 }
-
+function mantisUpdate(mantisId,mantisHM){
+				fn='UpdateWithNote';
+				uid = $('#mantisUsers').val();
+				pid = $('#mantisPartners').val();
+				month = $('#mantisMonths').val();				
+				start="";
+				durationms = 0;
+				note = "";
+				taskIds ="";
+				noteToggl="";
+				$('#divtogglfilterresult input:checkbox:checked').each(function(){
+					taskid = $(this).attr('taskid');
+					curdur = $(this).attr('durationms');
+					durationms = durationms + parseInt(curdur);
+					s = $(this).attr('start');
+					if (start=="") start = s;
+					note += s+": "+$('#desc'+taskid).html()+" ("+mstoHM(curdur)+")\n";
+					noteToggl += $('#desc'+taskid).html()+"\n";
+					taskIds += taskid+ "\n";
+				});
+				mantisPar = {'uid':uid,'pid':pid,'id':mantisId,'mantishm':mantisHM,'durms':durationms,'start':start,'month':month,'note':note};
+				togglPar = {'taskIds':taskIds,'togglDesc':noteToggl};
+				ajaxCall(fn,{'togglPar':togglPar,'mantisPar':mantisPar},true, fn);
+	
+}
 function Insert(result){
 	alert(JSON.stringify(result));
 	$( "#togglfilter" ).trigger( "click" );
 }
 function InsertWithNote(result){
+	alert(JSON.stringify(result));
+	$( "#togglfilter" ).trigger( "click" );
+}
+function UpdateWithNote(result){
 	alert(JSON.stringify(result));
 	$( "#togglfilter" ).trigger( "click" );
 }
@@ -220,7 +247,7 @@ function togglTasks(result){
 	for (var i = 0;i < r.length;i++){
 		res = r[i];
 		durstr = mstoHM(res.dur);
-		selectStr += "<div class='toggltask' id=ttask"+res.id+">";
+		selectStr += "<div class='toggltask' ttaskid='"+res.id+"'>";
 		selectStr += "<input start='"+res.start.substring(0,10)+"' durationms='"+res.dur+"' taskid='"+res.id+"' type=checkbox id=cb"+res.id+">";
 		selectStr += "<span>"+res.start.substring(0,10)+": </span>";
 		selectStr += "<span id=desc"+res.id+">"+res.description+"</span>";
@@ -229,7 +256,12 @@ function togglTasks(result){
 		//alert(JSON.stringify(res));
 	}
 	$('#divtogglfilterresult').html(selectStr);
-	
+	$('.toggltask').click(function(){
+		id = $(this).attr('ttaskid');
+		$('#cb'+id).prop("checked", !$('#cb'+id).prop("checked"));
+		
+
+	});	
 	
 }
 
@@ -264,6 +296,35 @@ function mantisMonths(result){
 		//alert(JSON.stringify(res));
 	}
 	$('#divmantisfilter').append(selectStr);
+
+}
+
+function mantisQuery(){
+	uid = $('#mantisUsers').val();
+	pid = $('#mantisPartners').val();
+	fn = 'mantisQueryResult';
+	ajaxCall(fn,{'uid':uid,'pid':pid},true, fn);
+	
+}
+function mantisQueryResult(result){
+	selectStr="";
+	for (var i = 0;i < result.length;i++){
+		res = result[i];
+		selectStr += "<div class='mantistask' mantishm='"+res.platform+"' mantisid="+res.id+">";
+		selectStr += "<span>["+res.id+"] "+res.last_updated+" : "+res.summary+" </span>";
+		selectStr += "</div>";
+	}
+	$('#divmantisresult').html(selectStr);
+	$('.mantistask').click(function(){
+		mantisId = $(this).attr('mantisid');
+		mantisHM = $(this).attr('mantishm');
+		mantisDesc = $(this).text();
+		var r = confirm("felírás ide: "+mantisDesc+". Folytatod?");
+		if (r == true) {
+			mantisUpdate(mantisId,mantisHM);
+		};
+		
+	});
 
 }
 

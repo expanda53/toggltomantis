@@ -22,6 +22,15 @@
 			return $hours!=""?($hours.':'.$minutes):"";
 			
 		}
+		private static function hmToMs($hm){
+			$t = explode(":",$hm);
+			$hours = $t[0];
+			$minutes = $t[1];
+			return ($hours * 60 * 60 * 1000) + ($minutes * 60 * 1000);
+
+			
+		}
+		
 		public static function getStatuses(){
 			
 			$sql="select value from mantis_config_table where config_id='status_enum_workflow'";
@@ -105,6 +114,27 @@
 
 		}
 		
+		public static function updateTask($params){
+			$uid = $params['uid'];
+			$bid = $params['id'];
+			$hm = $params['mantishm'];
+			$mantisms = self::hmToMs($hm);
+			$ver = $params['month'];
+			$durms = $params['durms'];
+			$durhm = self::mstoHM($durms + $mantisms);
+
+			$sql = " update mantis_bug_table set platform='$durhm',last_updated=now() where id = '$bid'";
+			$stmt = self::$db->query($sql);
+			
+			/* megjegyzes ha van */
+			if ($params['note'] && $params['note']!='') {
+				$note = $params['note'];
+				self::addNote($bid,$note,$uid);
+			}
+			
+			return $bid;
+
+		}
 		public static function addNote($mantisId,$note,$uid){
 			$note = stripcslashes($note);
 			$sql="insert into mantis_bugnote_text_table (note) values ('$note')";
@@ -113,6 +143,15 @@
 			
 			$sql="insert into mantis_bugnote_table (bug_id,bugnote_text_id,reporter_id,view_state,date_submitted, last_modified,note_type) values ('$mantisId','$noteId','$uid',10,now(),now(),0)";
 			$stmt = self::$db->query($sql);
+		}
+		
+		public static function runQuery($filter){
+			$uid = $filter['uid'];
+			$pid = $filter['pid'];
+			$sql = "select id, fixed_in_version, summary, status, last_updated, platform from mantis_bug_table where handler_id = '$uid' and project_id = '$pid' and status<80 order by last_updated desc limit 30";
+			$stmt = self::$db->query($sql);
+			return $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			
 		}
 	}
 ?>

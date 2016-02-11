@@ -9,8 +9,8 @@
 		Mantis bejegyzés
 		<div id=divmantisfilter></div>
 		<div id=divmantistabs>
-			<div class='divmantistab' id=divmantisuj>Új bejegyzés írása</div>
-			<div class='divmantistab' id=divmantisregi>Meglévő bejegyzésre új megjegyzés</div>
+			<div class='divmantistab' id=divmantisuj>Új bejelentés írása</div>
+			<div class='divmantistab' id=divmantisregi>Meglévő bejelentésre új megjegyzés</div>
 			<div class=divtabcontent>
 			</div>
 	</div>

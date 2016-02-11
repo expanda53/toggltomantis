@@ -32,7 +32,7 @@ button {
 	width: 570px;
 	height:22px;
 	line-height:22px;
-	cursor:context-menu;
+	cursor:pointer;
 }
 .toggltask:hover {
 	background-color:#f0f0f0;
@@ -60,11 +60,21 @@ button {
 #divmantis {
 	margin-left:10px;
 	padding:10px;
-	border:1px solid green;
 	width:600px;
 	height:300px;
-	width:600px;
 	float:left;
+	
+	vertical-align: baseline;
+	background-color:#F6F8FF;
+	-webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding-right: 0;
+	color:#000000;
+	font-size: 13px;
+	font-family: "Open Sans",Arial,sans-serif;	
 	
 }
 #divmantistabs {
@@ -99,12 +109,12 @@ button {
 	cursor:pointer;
 }
 .divtabcontent {
-	background-color:yellow;
+	background-color:#F6F8FF;
 	position: relative;
     left: 10px;
 	top:-12px;
-	height:50px;
-	width:380px;
+	height:35px;
+	width:570px;
     padding: 5px;	
 }
 #divmantiskulon {
@@ -120,6 +130,16 @@ button {
 	cursor:pointer;
 	padding:2px;
 	width:100px;
+	
+	-webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding-right: 0;
+	color:#000000;
+	font-size: 13px;
+	font-family: "Open Sans",Arial,sans-serif;	
 }
 
 .subtabactive {
@@ -130,7 +150,30 @@ button {
 }
 #divsubcontent1,#divsubcontent2 {
 	background-color:white;
+	width:0px;
 }
 #divsubcontent2 #mantisDesc {
 	width:300px;
+}
+#divmantisresult {
+	background-color: #F6F8FF;
+    color: #000000;
+    font-size: 14px;
+    font-family: "Open Sans",Arial,sans-serif;
+    width: 592px;
+    position: relative;
+    left: -26px;
+    padding: 10px;	
+}
+.mantistask{
+	padding:10px 5px;
+	margin:5px 0px;
+	border-bottom: 1px solid #e6e6e6;
+	width: inherited;
+	height:22px;
+	line-height:22px;
+	cursor:pointer;
+}
+.mantistask:hover {
+	background-color:#f0f0f0;
 }

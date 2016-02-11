@@ -1,2 +1,2 @@
-					mantis feladat választás
-					feladat lista
+<button id=bmantisquery>Lista</button>
+<div id=divmantisresult></div>

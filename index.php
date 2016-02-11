@@ -70,6 +70,28 @@
 			}
 			echo json_encode($res);
 			break;
+		case 'UpdateWithNote':
+			//'{"time_entry":{"description":"Meeting with possible clients","tags":[""],"duration":1240,"start":"2013-03-05T07:58:58.000Z","stop":"2013-03-05T08:58:58.000Z","duronly":true,"pid":123,"billable":true}}' \
+			$tag='beírva';
+			$togglPar=$r['togglPar'];
+			$mantisPar=$r['mantisPar'];
+			$mantisId = $mantis::updateTask($mantisPar);
+			$notes = explode("\n",$togglPar['togglDesc']);
+			$taskIds = explode("\n",$togglPar['taskIds']);
+			$res = "";
+			for ($i=0;$i<count($taskIds);$i++) {
+				
+				$desc = $notes[$i];
+				$desc = str_pad($mantisId,7,'0',STR_PAD_LEFT). ' ' .$desc;
+				$filter=array('tags'=>["".$tag.""],'description'=>$desc);	
+				$tid = $taskIds[$i];
+				if ($tid!='') {
+					$tpar = array('taskId'=>$tid);
+					$res += json_encode($toggl::updateTask($tpar, $filter));
+				}
+			}
+			echo json_encode($res);
+			break;
 		case 'mantisPartners':
 			echo json_encode($mantis::getPartners());
 			break;
@@ -79,7 +101,12 @@
 		case 'mantisMonths':
 			echo json_encode($mantis::getMonths());
 			break;
-
+		case 'mantisQueryResult':
+			$uid = $r['uid'];
+			$pid = $r['pid'];
+			$filter=array('uid'=>$uid,'pid'=>$pid);	
+			echo json_encode($mantis::runQuery($filter));
+			break;
 		default: 
 			echo 'error';
 	}
