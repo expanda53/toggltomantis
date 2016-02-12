@@ -197,15 +197,15 @@ function mantisUpdate(mantisId,mantisHM){
 	
 }
 function Insert(result){
-	alert(JSON.stringify(result));
+	/*alert(JSON.stringify(result));*/
 	$( "#togglfilter" ).trigger( "click" );
 }
 function InsertWithNote(result){
-	alert(JSON.stringify(result));
+	/*alert(JSON.stringify(result));*/
 	$( "#togglfilter" ).trigger( "click" );
 }
 function UpdateWithNote(result){
-	alert(JSON.stringify(result));
+	/*alert(JSON.stringify(result));*/
 	$( "#togglfilter" ).trigger( "click" );
 }
 
@@ -219,6 +219,7 @@ function togglUsers(result){
 		//alert(JSON.stringify(res));
 	}
 	$('#divtogglfilter').append(selectStr);
+	sortSelect('togglUsers');
 	
 }
 
@@ -231,6 +232,7 @@ function togglProjects(result){
 		//alert(JSON.stringify(res));
 	}
 	$('#divtogglfilter').append(selectStr);
+	sortSelect('togglProjects');
 
 }
 function mstoHM(ms) {
@@ -240,6 +242,20 @@ function mstoHM(ms) {
 		minutes = ("00" + minutes).slice(-2);
 		return hours+':'+minutes;
 
+}
+function sortSelect(id){
+	var my_options = $("#"+id+" option");
+	//var selected = $("#togglProjects").val(); /* preserving original selection, step 1 */
+
+	my_options.sort(function(a,b) {
+		if (a.text > b.text) return 1;
+		else if (a.text < b.text) return -1;
+		else return 0
+	})
+
+	$("#"+id).empty().append( my_options );
+	//$("#togglProjects").val(selected); /* preserving original selection, step 2 */
+	
 }
 function togglTasks(result){
 	r=result;

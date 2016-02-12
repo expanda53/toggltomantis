@@ -95,12 +95,7 @@
 					//var_dump($r);
 					
 					foreach ($r as $row){
-						
 							$arr[] =  array('id'=>$row->id, 'pid'=>$row->pid,'start'=>$row->start,'description'=>$row->description);//new togglTask($row->id,$row->pid,$row->start,$row->dur, $row->description);
-
-
-						
-						
 					}
 				}
 				return $arr;
