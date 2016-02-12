@@ -5,7 +5,7 @@ function ajaxCall( func, d,asyn,fn) {
   console.debug('ajax:'+func+' data:'+JSON.stringify(d));
   $.ajax({
         type: "POST",
-		url: "http://localhost/toggltomantis/index.php/" + func, 
+		url: "index.php/" + func, 
 		
         data: d,
 		async: asyn,
@@ -31,7 +31,7 @@ function ajaxCall( func, d,asyn,fn) {
         },
         error: function(data) {
             console.debug('ajax error:'+func+' data:'+JSON.stringify(data));
-			//alert('ajax error:'+func+' data:'+JSON.stringify(data));
+			alert('ajax error:'+func+' data:'+JSON.stringify(data));
 			res='ERROR';
         }
   });
@@ -55,6 +55,7 @@ function showMain(){
 			ajaxCall(fn,{},true, fn);
 			fn='togglProjects';
 			ajaxCall(fn,{},true, fn);
+			
 			fn='mantisUsers';
 			ajaxCall(fn,{},true, fn);
 			fn='mantisPartners';

@@ -1,6 +1,7 @@
 <?php
+
 	class Mantis {
-		private static $dsn="mysql:host=www.expanda.hu;port=3306;dbname=pulykakakas;charset=utf8";
+		private static $dsn="mysql:host=localhost;port=3306;dbname=pulykakakas;charset=utf8";
 		private static $username = 'expanda';
 		private static $password = 'abroszot624';
 		private static $options = array(
@@ -10,8 +11,31 @@
 		private static $db ;
 		
 		static function init() {
-			self::$db = new PDO(self::$dsn, self::$username, self::$password, self::$options);  		
+				try {
+					self::$db = new PDO(self::$dsn, self::$username, self::$password, self::$options);  			
+					self::$db->exec("set names utf8");
+				}
+				catch (PDOException $e) {
+					print "MySql Connection error!: " . $e->getMessage();
+					die();
+				}
 		}
+		
+		private static function fetchAll($stmt){
+			return $stmt->fetchAll(PDO::FETCH_ASSOC);
+				
+		}
+		private static function query($sql){
+				try {
+					$stmt = self::$db->query($sql);
+				}
+				catch (PDOException $e) {
+					print "MySql Query error!: " . $e->getMessage();
+					$stmt=null;
+				}
+			return $stmt;
+		}
+		
 		private static function mstoHM($ms){
 			$hours = "";
 			$minutes = "";
@@ -34,8 +58,8 @@
 		public static function getStatuses(){
 			
 			$sql="select value from mantis_config_table where config_id='status_enum_workflow'";
-			$stmt = self::$db->query($sql);
-			$row = $stmt->fetch(PDO::FETCH_ASSOC);
+			$stmt = self::query($sql);
+			$row = self::fetchAll($stmt);
 			foreach ($row as $k => $v) {
 				$status = unserialize(utf8_decode($v));
 			}
@@ -53,18 +77,23 @@
 		
 		public static function getPartners() {
 			$sql="select name , id from mantis_project_table where enabled=1 order by name";
-			$stmt = self::$db->query($sql);
-			return $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = self::query($sql);
+			
+			return self::fetchAll($stmt);
 		}
 		public static function getUsers() {
 			$sql="select username , id from mantis_user_table where enabled=1 and access_level>=70 order by username";
-			$stmt = self::$db->query($sql);
-			return $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = self::query($sql);
+			return self::fetchAll($stmt);
+			
 		}
 		public static function getMonths() {
 			$sql="select version from mantis_project_version_table where version not in ('X','Y') order by version desc limit 4";
-			$stmt = self::$db->query($sql);
-			return $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			//$stmt = self::$db->query($sql);
+			//return $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$stmt = self::query($sql);
+			return self::fetchAll($stmt);
+			
 		}		
 		public static function insertTask($params){
 			$uid = $params['uid'];
@@ -80,29 +109,33 @@
 			$sql = " insert into mantis_bug_text_table (description )";
 			$sql.=" values ('$desc') ";
 			
-			$stmt = self::$db->query($sql);
+			$stmt = self::query($sql);
 			$btid =  self::$db->lastInsertId();
+			//echo $btid = self::$db->insert_id;
+
+			
 
 
 			$sql = " insert into mantis_bug_table (fixed_in_version,summary,status,handler_id,reporter_id,project_id,last_updated,date_submitted,severity,bug_text_id,platform)";
 			$sql.=" values ('$ver','$desc','$status','$uid','$uid','$pid',now(),now(),$severity,$btid,'$durhm') ";
 			
-			$stmt = self::$db->query($sql);
+			$stmt = self::query($sql);
 			$bid = self::$db->lastInsertId();
+			//$btid = self::$db->insert_id;
 			
 			/* uj bejelentes */
 			$sql = "insert into mantis_bug_history_table (date_modified,user_id,bug_id,field_name,old_value,new_value,type)";
 			$sql.=" values (now(),'$uid','$bid','','','',1);";
-			$stmt = self::$db->query($sql);
+			$stmt = self::query($sql);
 			/* status */
 			$sql = "insert into mantis_bug_history_table (date_modified,user_id,bug_id,field_name,old_value,new_value,type)";
 			$sql.=" values (now(),'$uid','$bid','status','10','$status',0);";
-			$stmt = self::$db->query($sql);
+			$stmt = self::query($sql);
 
 			/* hozzarendeles */
 			$sql = "insert into mantis_bug_history_table (date_modified,user_id,bug_id,field_name,old_value,new_value,type)";
 			$sql.=" values (now(),'$uid','$bid','handler_id','','$uid',0);";
-			$stmt = self::$db->query($sql);
+			$stmt = self::query($sql);
 			
 			/* megjegyzes ha van */
 			if ($params['note'] && $params['note']!='') {
@@ -138,19 +171,22 @@
 		public static function addNote($mantisId,$note,$uid){
 			$note = stripcslashes($note);
 			$sql="insert into mantis_bugnote_text_table (note) values ('$note')";
-			$stmt = self::$db->query($sql);
+			$stmt = self::query($sql);
 			$noteId = self::$db->lastInsertId();
+			//$noteId = self::$db->insert_id;
 			
 			$sql="insert into mantis_bugnote_table (bug_id,bugnote_text_id,reporter_id,view_state,date_submitted, last_modified,note_type) values ('$mantisId','$noteId','$uid',10,now(),now(),0)";
-			$stmt = self::$db->query($sql);
+			$stmt = self::query($sql);
 		}
 		
 		public static function runQuery($filter){
 			$uid = $filter['uid'];
 			$pid = $filter['pid'];
-			$sql = "select id, fixed_in_version, summary, status, last_updated, platform from mantis_bug_table where handler_id = '$uid' and project_id = '$pid' and status<80 order by last_updated desc limit 30";
-			$stmt = self::$db->query($sql);
-			return $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$sql = "select id, fixed_in_version,   summary, status, last_updated, platform from mantis_bug_table where handler_id = '$uid' and project_id = '$pid' and status<80 order by last_updated desc limit 30";
+			$stmt = self::query($sql);
+			$rows = self::fetchAll($stmt);
+			//var_dump($rows);
+			return $rows;
 			
 		}
 	}
