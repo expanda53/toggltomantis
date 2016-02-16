@@ -40,8 +40,16 @@
 			$hours = "";
 			$minutes = "";
 			if ($ms>0) {
-				$hours = str_pad(floor($ms / 1000 / 3600),2,'0',STR_PAD_LEFT) ;
-				$minutes = str_pad(floor(($ms - ($hours * 1000 * 3600)) / 1000 / 60),2,'0',STR_PAD_LEFT) ;
+				$h = floor($ms / 1000 / 3600);
+				$m = floor(($ms - ($h * 1000 * 3600)) / 1000 / 60);
+				//felfelé kerekítés:
+				
+				$min5 = bcdiv($m,5)*5;
+				if ($min5<$m) $min5 = $min5 + 5;
+				if ($min5>=60) {$h = $h + 1;$min5=0;}
+
+				$hours = str_pad($h,2,'0',STR_PAD_LEFT) ;
+				$minutes = str_pad($min5,2,'0',STR_PAD_LEFT) ;
 			}
 			return $hours!=""?($hours.':'.$minutes):"";
 			
@@ -96,6 +104,7 @@
 			
 		}		
 		public static function insertTask($params){
+			$sessionid = uniqid();
 			$uid = $params['uid'];
 			$pid = $params['pid'];
 			$desc = $params['desc'];
@@ -116,8 +125,8 @@
 			
 
 
-			$sql = " insert into mantis_bug_table (fixed_in_version,summary,status,handler_id,reporter_id,project_id,last_updated,date_submitted,severity,bug_text_id,platform)";
-			$sql.=" values ('$ver','$desc','$status','$uid','$uid','$pid',now(),now(),$severity,$btid,'$durhm') ";
+			$sql = " insert into mantis_bug_table (fixed_in_version,summary,status,handler_id,reporter_id,project_id,last_updated,date_submitted,severity,bug_text_id,platform,os)";
+			$sql.=" values ('$ver','$desc','$status','$uid','$uid','$pid',now(),now(),$severity,$btid,'$durhm','$sessionid') ";
 			
 			$stmt = self::query($sql);
 			$bid = self::$db->lastInsertId();
@@ -137,10 +146,17 @@
 			$sql.=" values (now(),'$uid','$bid','handler_id','','$uid',0);";
 			$stmt = self::query($sql);
 			
+			/* ido */
+			$sql = "insert into mantis_bug_history_table (date_modified,user_id,bug_id,field_name,old_value,new_value,type)";
+			$sql.=" values (now(),'$uid','$bid','platform','','$durhm',0);";
+			$stmt = self::query($sql);
+
 			/* megjegyzes ha van */
 			if ($params['note'] && $params['note']!='') {
 				$note = $params['note'];
-				self::addNote($bid,$note,$uid);
+				//self::addNote($bid,$note,$uid);
+				/* megoldásba rakjuk inkább */
+				self::addBugText($bid,$btid,$note);
 			}
 			
 			return $bid;
@@ -148,6 +164,7 @@
 		}
 		
 		public static function updateTask($params){
+			$sessionid = uniqid();
 			$uid = $params['uid'];
 			$bid = $params['id'];
 			$hm = $params['mantishm'];
@@ -156,13 +173,28 @@
 			$durms = $params['durms'];
 			$durhm = self::mstoHM($durms + $mantisms);
 
-			$sql = " update mantis_bug_table set platform='$durhm',last_updated=now() where id = '$bid'";
+			$sql = "select platform,bug_text_id from mantis_bug_table where id = '$bid'";
+			$stmt = self::query($sql);
+			$q = self::fetchAll($stmt);
+			//var_dump($q[0]);
+			$durhm_old = $q[0]['platform'];
+			$btid = $q[0]['bug_text_id'];
+			
+			
+			$sql = "insert into mantis_bug_history_table (date_modified,user_id,bug_id,field_name,old_value,new_value,type)";
+			$sql.=" values (now(),'$uid','$bid','platform','$durhm_old','$durhm',0);";
+			$stmt = self::query($sql);
+
+			
+			$sql = " update mantis_bug_table set platform='$durhm',last_updated=now(),os='$sessionid' where id = '$bid'";
 			$stmt = self::$db->query($sql);
 			
 			/* megjegyzes ha van */
 			if ($params['note'] && $params['note']!='') {
 				$note = $params['note'];
-				self::addNote($bid,$note,$uid);
+				//self::addNote($bid,$note,$uid);
+				/* megoldásba rakjuk inkább */
+				self::addBugText($bid,$btid,$note);
 			}
 			
 			return $bid;
@@ -177,6 +209,30 @@
 			
 			$sql="insert into mantis_bugnote_table (bug_id,bugnote_text_id,reporter_id,view_state,date_submitted, last_modified,note_type) values ('$mantisId','$noteId','$uid',10,now(),now(),0)";
 			$stmt = self::query($sql);
+		}
+		public static function addBugText($mantisId,$btid,$note){
+			$note = stripcslashes($note);
+			$sql = "select id,additional_information as info from mantis_bug_text_table where id = '$btid'";
+			$stmt = self::query($sql);
+			$q = self::fetchAll($stmt);
+			//var_dump($q[0]);
+			if ($q[0]['id']=='') {
+				$sql="insert into mantis_bug_text_table (additional_information) values ('$note')";
+				$stmt = self::query($sql);
+				$btid =  self::$db->lastInsertId();
+				$sql="update mantis_bug_table set bug_text_id = '$btid'";
+				
+			}
+			else {
+				if ($q[0]['info']!='') $note = "\n" . $note;
+				$sql="update mantis_bug_text_table set additional_information =concat(coalesce(additional_information,''),'$note') where id = '$btid'";
+			}
+			$stmt = self::query($sql);
+			//megoldás frissítve
+			$sql = "insert into mantis_bug_history_table (date_modified,user_id,bug_id,field_name,old_value,new_value,type)";
+			$sql.=" values (now(),'$uid','$mantisId','','','',7);";
+			$stmt = self::query($sql);
+			
 		}
 		
 		public static function runQuery($filter){

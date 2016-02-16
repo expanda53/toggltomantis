@@ -20,7 +20,7 @@
 				self::$wid = $wid;
 			}
 			public static function getWorkspaces(){
-				return self::$wid; //ez egyel�re nem kell, expand�t adom vissza
+				return self::$wid; //ez egyelőre nem kell, expandát adom vissza
 			}
 			public static function getUsers() {
 				curl_setopt(self::$ch, CURLOPT_URL, 'https://www.toggl.com/api/v8/workspaces/'.self::$wid.'/users' ); //users
@@ -68,15 +68,13 @@
 				//var_dump($r);
 				$arr = array();
 				foreach ($r->data as $row){
-					
-					if (!in_array(utf8_encode('be�rva'),$row->tags)){
+					if (!in_array('beírva',$row->tags)){
+						$search = array('ő','Ő','ű','Ű');
+						$replace = array ('ö','Ö','ü','Ü');
+						$row->description = str_replace($search, $replace, $row->description);
 						$arr[] =  array('id'=>$row->id, 'pid'=>$row->pid,'start'=>$row->start,'dur'=>$row->dur,'description'=>$row->description);//new togglTask($row->id,$row->pid,$row->start,$row->dur, $row->description);
 					}
-
-					
-					
 				}
-				
 				return $arr;
 			}
 			
@@ -91,11 +89,14 @@
 					curl_setopt(self::$ch, CURLOPT_POSTFIELDS, json_encode($data) ); //tasks				
 					$result = curl_exec(self::$ch);
 					//echo curl_error($ch) .'->'. curl_errno($ch);
-					$r = json_decode($result);
+					$r = json_encode($result);
 					//var_dump($r);
 					
 					foreach ($r as $row){
-							$arr[] =  array('id'=>$row->id, 'pid'=>$row->pid,'start'=>$row->start,'description'=>$row->description);//new togglTask($row->id,$row->pid,$row->start,$row->dur, $row->description);
+						$search = array('ő','Ő','ű','Ű');
+						$replace = array ('ö','Ö','ü','Ü');
+						$row->description = str_replace($search, $replace, $row->description);
+						$arr[] =  array('id'=>$row->id, 'pid'=>$row->pid,'start'=>$row->start,'description'=>$row->description);//new togglTask($row->id,$row->pid,$row->start,$row->dur, $row->description);
 					}
 				}
 				return $arr;

@@ -12,7 +12,7 @@ button {
 #divtoggl {
 	padding:10px;
 	vertical-align: baseline;
-	width:600px;
+	width:532px;
 	float:left;
 	background-color:#f5f5f5;
 	-webkit-box-flex: 1;
@@ -29,7 +29,7 @@ button {
 	padding:10px 5px;
 	margin:5px 0px;
 	border-bottom: 1px solid #e6e6e6;
-	width: 570px;
+	width: 508px;
 	height:22px;
 	line-height:22px;
 	cursor:pointer;
@@ -170,7 +170,7 @@ button {
 	margin:5px 0px;
 	border-bottom: 1px solid #e6e6e6;
 	width: inherited;
-	height:22px;
+	min-height:22px;
 	line-height:22px;
 	cursor:pointer;
 }

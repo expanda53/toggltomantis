@@ -46,7 +46,9 @@
 			$mantisPar=$r['mantisPar'];
 			$mantisId = $mantis->insertTask($mantisPar);
 			$desc = $mantisPar['desc'];
-			$desc = str_pad($mantisId,7,'0',STR_PAD_LEFT). ' ' .$desc;
+			if (stripos($desc,$mantisId)===false) {
+				$desc = str_pad($mantisId,7,'0',STR_PAD_LEFT). ': ' .$desc;
+			}
 			$filter=array('tags'=>$tag,'description'=>$desc);	
 			
 			echo json_encode($toggl->updateTask($togglPar, $filter));
@@ -64,7 +66,9 @@
 			for ($i=0;$i<count($taskIds);$i++) {
 				
 				$desc = $notes[$i];
-				$desc = str_pad($mantisId,7,'0',STR_PAD_LEFT). ' ' .$desc;
+				if (stripos($desc,$mantisId)===false) {
+					$desc = str_pad($mantisId,7,'0',STR_PAD_LEFT). ': ' .$desc;
+				}
 				$filter=array('tags'=>$tag,'description'=>$desc);	
 				$tid = $taskIds[$i];
 				if ($tid!='') {
@@ -86,7 +90,9 @@
 			for ($i=0;$i<count($taskIds);$i++) {
 				
 				$desc = $notes[$i];
-				$desc = str_pad($mantisId,7,'0',STR_PAD_LEFT). ' ' .$desc;
+				if (stripos($desc,$mantisId)===false) {
+					$desc = str_pad($mantisId,7,'0',STR_PAD_LEFT). ': ' .$desc;
+				}
 				$filter=array('tags'=>$tag,'description'=>$desc);	
 				$tid = $taskIds[$i];
 				if ($tid!='') {

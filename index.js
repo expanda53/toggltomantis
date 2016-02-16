@@ -48,9 +48,12 @@ function showMain(){
 			$('#togglDate').datepicker({'dateFormat':"yy-mm-dd"});
 			$('#divmantisuj').addClass('tabactive');
 			$('#divmantisregi').addClass('tabinactive');
-			
 
-		
+			$('#togglUsers').hide();
+			$('#togglProjects').hide();
+			$('#mantisUsers').hide();
+			$('#mantisPartners').hide();
+			$('#mantisMonths').hide();
 			fn='togglUsers';
 			ajaxCall(fn,{},true, fn);
 			fn='togglProjects';
@@ -79,6 +82,7 @@ function showMain(){
 					$('#divmantisregi').removeClass('tabactive');
 					$('#divmantisuj').removeClass('tabinactive');
 					$('#divmantiskulon').click(function(){
+						$('#spanDateNeeded').hide();
 						$('#divmantiskulon').addClass('tabactive');
 						$('#divmantiskulon').removeClass('tabinactive');
 						$('#divmantisegybe').addClass('tabinactive');
@@ -87,6 +91,7 @@ function showMain(){
 						$('#divsubcontent1').show();
 					});
 					$('#divmantisegybe').click(function(){
+						$('#spanDateNeeded').show();
 						$('#divmantisegybe').addClass('tabactive');
 						$('#divmantisegybe').removeClass('tabinactive');
 						$('#divmantiskulon').addClass('tabinactive');
@@ -110,6 +115,7 @@ function showMain(){
 				$.get( "views/mantis_old.tpl", function( data ) { 
 					tpl = data; 
 					$('.divtabcontent').html(tpl);
+					$('#spanDateNeeded').show();
 					$('#divmantisregi').addClass('tabactive');
 					$('#divmantisuj').addClass('tabinactive');
 					$('#divmantisuj').removeClass('tabactive');
@@ -164,7 +170,14 @@ function mantis_newbug_with_note (){
 					durationms = durationms + parseInt(curdur);
 					s = $(this).attr('start');
 					if (start=="") start = s;
-					note += s+": "+$('#desc'+taskid).html()+" ("+mstoHM(curdur)+")\n";
+					//note += s+": "+$('#desc'+taskid).html()+" ("+mstoHM(curdur)+")\n";
+					if ($('#cbDateNeeded').prop('checked')) {
+						note += s+": "+$('#desc'+taskid).html()+"\n";
+					}
+					else {
+						note += $('#desc'+taskid).html()+"\n";
+					}
+
 					noteToggl += $('#desc'+taskid).html()+"\n";
 					taskIds += taskid+ "\n";
 				});
@@ -188,7 +201,13 @@ function mantisUpdate(mantisId,mantisHM){
 					durationms = durationms + parseInt(curdur);
 					s = $(this).attr('start');
 					if (start=="") start = s;
-					note += s+": "+$('#desc'+taskid).html()+" ("+mstoHM(curdur)+")\n";
+					//note += s+": "+$('#desc'+taskid).html()+" ("+mstoHM(curdur)+")\n";
+					if ($('#cbDateNeeded').prop('checked')) {
+						note += s+": "+$('#desc'+taskid).html()+"\n";
+					}
+					else {
+						note += $('#desc'+taskid).html()+"\n";
+					}
 					noteToggl += $('#desc'+taskid).html()+"\n";
 					taskIds += taskid+ "\n";
 				});
@@ -213,28 +232,29 @@ function UpdateWithNote(result){
 
 function togglUsers(result){
 	r=result;
-	selectStr = "<select id=togglUsers>";
+	selectStr = "";
 	for (var i = 0;i < r.length;i++){
 		res = r[i];
 		selectStr += "<option value='"+res.id+"'>"+res.fullname+"</option>";
 		//alert(JSON.stringify(res));
 	}
-	$('#divtogglfilter').append(selectStr);
+	$('#togglUsers').append(selectStr);
 	sortSelect('togglUsers');
+	$('#togglUsers').show();
 	
 }
 
 function togglProjects(result){
 	r=result;
-	selectStr = "<select id=togglProjects>";
+	selectStr="";
 	for (var i = 0;i < r.length;i++){
 		res = r[i];
 		selectStr += "<option value='"+res.id+"'>"+res.name+"</option>";
 		//alert(JSON.stringify(res));
 	}
-	$('#divtogglfilter').append(selectStr);
+	$('#togglProjects').append(selectStr);
 	sortSelect('togglProjects');
-
+	$('#togglProjects').show();
 }
 function mstoHM(ms) {
 		hours = Math.trunc(ms / 1000 / 3600) ;
@@ -265,7 +285,7 @@ function togglTasks(result){
 		res = r[i];
 		durstr = mstoHM(res.dur);
 		selectStr += "<div class='toggltask' ttaskid='"+res.id+"'>";
-		selectStr += "<input start='"+res.start.substring(0,10)+"' durationms='"+res.dur+"' taskid='"+res.id+"' type=checkbox id=cb"+res.id+">";
+		selectStr += "<input class=togglcb start='"+res.start.substring(0,10)+"' durationms='"+res.dur+"' taskid='"+res.id+"' type=checkbox id=cb"+res.id+">";
 		selectStr += "<span>"+res.start.substring(0,10)+": </span>";
 		selectStr += "<span id=desc"+res.id+">"+res.description+"</span>";
 		selectStr += "<span> ("+durstr+")</span>";
@@ -276,43 +296,48 @@ function togglTasks(result){
 	$('.toggltask').click(function(){
 		id = $(this).attr('ttaskid');
 		$('#cb'+id).prop("checked", !$('#cb'+id).prop("checked"));
-		
-
+	});	
+	$('.togglcb').click(function(event){
+		event.stopPropagation();
+		//event.preventDefault();
 	});	
 	
 }
 
 function mantisPartners(result){
 	r=result;
-	selectStr = "<select id=mantisPartners>";
+	selectStr = "";
 	for (var i = 0;i < r.length;i++){
 		res = r[i];
 		selectStr += "<option value='"+res.id+"'>"+res.name+"</option>";
 		//alert(JSON.stringify(res));
 	}
-	$('#divmantisfilter').append(selectStr);
+	$('#mantisPartners').append(selectStr);
+	$('#mantisPartners').show();
 }
 
 function mantisUsers(result){
 	r=result;
-	selectStr = "<select id=mantisUsers>";
+	selectStr = "";
 	for (var i = 0;i < r.length;i++){
 		res = r[i];
 		selectStr += "<option value='"+res.id+"'>"+res.username+"</option>";
 		//alert(JSON.stringify(res));
 	}
-	$('#divmantisfilter').append(selectStr);
+	$('#mantisUsers').append(selectStr);
+	$('#mantisUsers').show();
 
 }
 function mantisMonths(result){
 	r=result;
-	selectStr = "<select id=mantisMonths>";
+	selectStr = "";
 	for (var i = 0;i < r.length;i++){
 		res = r[i];
 		selectStr += "<option value='"+res.version+"'>"+res.version+"</option>";
 		//alert(JSON.stringify(res));
 	}
-	$('#divmantisfilter').append(selectStr);
+	$('#mantisMonths').append(selectStr);
+	$('#mantisMonths').show();
 
 }
 
