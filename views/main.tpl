@@ -10,7 +10,7 @@
 		<div id=divtogglfilterresult></div>
 	</div>
 	<div id=divmantis>
-		Mantis bejegyzés
+		Mantis hiba bejelentés
 		<div id=divmantisfilter>
 			<select id=mantisUsers></select>
 			<select id=mantisPartners></select>
@@ -19,7 +19,7 @@
 		</div>
 		<div id=divmantistabs>
 			<div class='divmantistab' id=divmantisuj>Új bejelentés írása</div>
-			<div class='divmantistab' id=divmantisregi>Meglévő bejelentésre új megjegyzés</div>
+			<div class='divmantistab' id=divmantisregi>Meglévő bejelentés folytatása</div>
 			<div class=divtabcontent>
 			</div>
 	</div>

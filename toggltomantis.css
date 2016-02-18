@@ -5,7 +5,7 @@ select {
 	font-weight:400;
 }
 button {
-	padding:5px;
+	padding:9px;
 	margin:2px;
 }
 
@@ -93,20 +93,22 @@ button {
 	position:relative;
 	top:15px;
 	left:10px;
-	width:118px;
+	width:130px;
 	height:18px;
 	padding:5px;
 	cursor:pointer;
+	text-align:center;
 	
 }
 #divmantisregi {
 	position:relative;
 	top:-15px;
-	left:143px;
-	width:250px;
+	left:151px;
+	width:200px;
 	height:18px;
 	padding:5px;
 	cursor:pointer;
+	text-align:center;
 }
 .divtabcontent {
 	background-color:#F6F8FF;
@@ -122,15 +124,16 @@ button {
 	cursor:pointer;
 	padding:2px;
 	width:100px;
+	text-align:center;
 }
 #divmantisegybe {
 	position:relative;
 	top: -24px;
-    left: 110px;	
+    left: 105px;	
 	cursor:pointer;
 	padding:2px;
 	width:100px;
-	
+	text-align:center;
 	-webkit-box-flex: 1;
     -moz-box-flex: 1;
     -webkit-flex: 1 1 auto;
