@@ -353,7 +353,9 @@ function mantisQueryResult(result){
 	for (var i = 0;i < result.length;i++){
 		res = result[i];
 		selectStr += "<div class='mantistask' mantishm='"+res.platform+"' mantisid="+res.id+">";
-		selectStr += "<span>["+res.id+"] "+res.last_updated+" : "+res.summary+" </span>";
+		selectStr += "<span>["+res.id+"] "+res.last_updated+" : "+res.summary;
+		if (res.fixed_in_version!="") selectStr += " ("+res.fixed_in_version+") ";
+		selectStr +=" </span>"
 		selectStr += "</div>";
 	}
 	$('#divmantisresult').html(selectStr);
