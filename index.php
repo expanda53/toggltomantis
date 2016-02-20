@@ -117,6 +117,18 @@
 			$filter=array('uid'=>$uid,'pid'=>$pid);	
 			echo json_encode($mantis->runQuery($filter));
 			break;
+		case 'projectAssignCheck':
+			$tpid = $r['togglPId'];
+			$mpid = $r['mantisPId'];
+			$filter=array('tpid'=>$tpid,'mpid'=>$mpid);	
+			echo json_encode($mantis->projectAssignCheck($filter));
+			break;
+		case 'projectAssign':
+			$tpid = $r['togglPId'];
+			$mpid = $r['mantisPId'];
+			$filter=array('tpid'=>$tpid,'mpid'=>$mpid);	
+			echo json_encode($mantis->projectAssign($tpid,$mpid));
+			break;
 		default: 
 			echo 'error';
 	}

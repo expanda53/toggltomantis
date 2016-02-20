@@ -255,6 +255,15 @@ function togglProjects(result){
 	$('#togglProjects').append(selectStr);
 	sortSelect('togglProjects');
 	$('#togglProjects').show();
+	
+	$('#togglProjects').bind('change',function () {
+		togglPId =  $(this).val();
+		fn='projectAssignCheck';
+		ajaxCall(fn,{'togglPId':togglPId,'mantisPId':-1},true, fn+'Toggl');
+	})
+	$('#togglProjects').trigger('change');
+	
+	
 }
 function mstoHM(ms) {
 		hours = Math.trunc(ms / 1000 / 3600) ;
@@ -314,6 +323,34 @@ function mantisPartners(result){
 	}
 	$('#mantisPartners').append(selectStr);
 	$('#mantisPartners').show();
+	$('#mantisPartners').bind('change',function () {
+		togglPId =  $('#togglProjects').val();
+		mantisPId = $(this).val();
+		fn='projectAssignCheck';
+		ajaxCall(fn,{'togglPId':togglPId,'mantisPId':mantisPId},true, fn);
+	})
+}
+
+function projectAssignCheck (result) {
+	if (result=='') {
+		var r = confirm("Toggl és Mantis partner összerendelés. Folytatod?");
+		if (r == true) {
+			togglPId =  $('#togglProjects').val();
+			mantisPId = $('#mantisPartners').val();
+			fn='projectAssign';
+			ajaxCall(fn,{'togglPId':togglPId,'mantisPId':mantisPId},true, fn);
+		};
+		
+	}
+}
+function projectAssignCheckToggl (result) {
+	if (result!='') {
+			$('#mantisPartners').val(result[0].rcount);
+	}
+}
+
+function projectAssign(result) {
+	//alert(JSON.stringify(result));
 }
 
 function mantisUsers(result){
@@ -326,7 +363,6 @@ function mantisUsers(result){
 	}
 	$('#mantisUsers').append(selectStr);
 	$('#mantisUsers').show();
-
 }
 function mantisMonths(result){
 	r=result;

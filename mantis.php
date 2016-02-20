@@ -245,5 +245,20 @@
 			return $rows;
 			
 		}
+		public static function projectAssignCheck($filter){
+			//var_dump($filter);
+			$mantisId = $filter['mpid'];
+			$togglId = $filter['tpid'];
+			/* megnézzük melyik mantis projecthez van hozzárendelve */
+			$sql="select mantis_project_id as rcount from toggl_project where toggl_project_id = $togglId";
+			$stmt = self::query($sql);
+			$rows = self::fetchAll($stmt);
+			return $rows;
+		}
+
+		public static function projectAssign($togglId,$mantisId){
+			$sql="CALL toggl_project_assign($togglId,$mantisId)";
+			$stmt = self::query($sql);
+		}
 	}
 ?>
