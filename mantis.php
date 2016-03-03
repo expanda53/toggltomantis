@@ -114,7 +114,6 @@
 			$durhm = self::mstoHM($durms);
 			$status='50';
 			$severity='10';
-
 			$sql = " insert into mantis_bug_text_table (description )";
 			$sql.=" values ('$desc') ";
 			
@@ -153,12 +152,15 @@
 
 			/* megjegyzes ha van */
 			if ($params['note'] && $params['note']!='') {
-				$note = $params['note'];
 				$bids = str_pad($bid,7,'0',STR_PAD_LEFT) ;
-				$note = str_replace($bids.':', '', $note);
-				//self::addNote($bid,$note,$uid);
-				/* megoldásba rakjuk inkább */
-				self::addBugText($bid,$btid,$note,$uid);
+				$notes = explode("\n",$params['note']);
+				foreach ($notes as $note) {
+					$note = str_replace($bids.':', '', $note);
+					//self::addNote($bid,$note,$uid);
+					/* megoldásba rakjuk inkább */
+					self::addBugText($bid,$btid,$note,$uid);
+				}
+				
 			}
 			
 			return $bid;
@@ -220,6 +222,8 @@
 			$q = self::fetchAll($stmt);
 			//var_dump($q[0]);
 			if ($q[0]['id']=='') {
+				//ez az ag elvileg sosem futhat, mert a description mar ki van toltve az insertTask-nal. Kozvetlen mantis felvitelnel meg ugysem engedi addig lezarni, amig nincs leiras, tehat az id mar ott is adott.
+				$note=trim($note);
 				$note = stripcslashes($note);
 				$sql="insert into mantis_bug_text_table (additional_information) values ('$note')";
 				$stmt = self::query($sql);
@@ -230,7 +234,7 @@
 			else {
 				$sql="";
 				$note=trim($note);
-				if (stripos($q[0]['info'],$note)===false) {
+				if (stripos($q[0]['info'],$note)===false && stripos($q[0]['info'],stripcslashes($note))===false) {
 					if ($q[0]['info']!='') $note = "\r\n" . $note;
 					$note = stripcslashes($note);
 					$sql="update mantis_bug_text_table set additional_information =concat(coalesce(additional_information,''),'$note') where id = '$btid'";

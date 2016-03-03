@@ -59,7 +59,9 @@
 			$tag= array("beírva");
 			$togglPar=$r['togglPar'];
 			$mantisPar=$r['mantisPar'];
-			$mantisId = $mantis->insertTask($mantisPar);
+			$m = $mantisPar;
+			//$m['note']=''; /* kulonben egybe irna fel az osszes megjegyzest, es nem tudna kiszurni belole, ami mar fel lett irva korabban */
+			$mantisId = $mantis->insertTask($m);
 			$notes = explode("\n",$togglPar['togglDesc']);
 			$taskIds = explode("\n",$togglPar['taskIds']);
 			$res = "";
