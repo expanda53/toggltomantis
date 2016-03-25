@@ -227,6 +227,8 @@ function InsertWithNote(result){
 function UpdateWithNote(result){
 	/*alert(JSON.stringify(result));*/
 	$( "#togglfilter" ).trigger( "click" );
+	mantisQuery();
+	
 }
 
 

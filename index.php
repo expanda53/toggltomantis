@@ -9,7 +9,7 @@
  
   $mantis = new Mantis();
   $mantis->init();
- 
+
  //$statuses = $mantis->getStatuses();
  
   $request  = strstr($_SERVER['REQUEST_URI'],".php");
