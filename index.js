@@ -1,3 +1,10 @@
+var users={
+       1520239:7 /* hogy */, 
+       1526962:8 /* cseke */,
+       1527157:9 /* kende */,
+       1528572:11 /* robi */,
+       1528571:6 /* nazs */
+}
 
 $.ajaxSetup({ cache: false });
 function ajaxCall( func, d,asyn,fn) {
@@ -241,8 +248,14 @@ function togglUsers(result){
 		//alert(JSON.stringify(res));
 	}
 	$('#togglUsers').append(selectStr);
+    $('#togglUsers').bind('change',function(){
+            togglUId = $(this).val();
+            mantisUId =  users[togglUId];
+            $('#mantisUsers').val(mantisUId);
+    })
 	sortSelect('togglUsers');
 	$('#togglUsers').show();
+    $('#togglUsers').trigger('change');
 	
 }
 
