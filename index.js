@@ -5,6 +5,7 @@ var users={
        1528572:11 /* robi */,
        1528571:6 /* nazs */
 }
+var currentMantisUId = 0;
 
 $.ajaxSetup({ cache: false });
 function ajaxCall( func, d,asyn,fn) {
@@ -112,6 +113,7 @@ function showMain(){
 					$('#begybestart').click(function(){
 						mantis_newbug_with_note();
 					});
+                    $('#mantisUsers').hide();                    
 					$('#divmantiskulon').trigger('click');
 				});
 			
@@ -127,6 +129,7 @@ function showMain(){
 					$('#divmantisuj').addClass('tabinactive');
 					$('#divmantisuj').removeClass('tabactive');
 					$('#divmantisregi').removeClass('tabinactive');
+                    $('#mantisUsers').show();
 					$('#bmantisquery').click(function(){
 						mantisQuery();
 					});					
@@ -141,7 +144,8 @@ function showMain(){
 function mantis_newbug (){
 			
 				fn='Insert';
-				uid = $('#mantisUsers').val();
+				//uid = $('#mantisUsers').val();
+                uid = currentMantisUId;
 				pid = $('#mantisPartners').val();
 				month = $('#mantisMonths').val();
 
@@ -162,7 +166,8 @@ function mantis_newbug (){
 function mantis_newbug_with_note (){
 			
 				fn='InsertWithNote';
-				uid = $('#mantisUsers').val();
+				//uid = $('#mantisUsers').val();
+                uid = currentMantisUId;
 				pid = $('#mantisPartners').val();
 				month = $('#mantisMonths').val();
 				mantisDesc = $('#mantisDesc').val();
@@ -194,7 +199,8 @@ function mantis_newbug_with_note (){
 }
 function mantisUpdate(mantisId,mantisHM){
 				fn='UpdateWithNote';
-				uid = $('#mantisUsers').val();
+				//uid = $('#mantisUsers').val();
+                uid = currentMantisUId;
 				pid = $('#mantisPartners').val();
 				month = $('#mantisMonths').val();				
 				start="";
@@ -252,6 +258,7 @@ function togglUsers(result){
             togglUId = $(this).val();
             mantisUId =  users[togglUId];
             $('#mantisUsers').val(mantisUId);
+            currentMantisUId = mantisUId;
     })
 	sortSelect('togglUsers');
 	$('#togglUsers').show();
@@ -377,7 +384,7 @@ function mantisUsers(result){
 		//alert(JSON.stringify(res));
 	}
 	$('#mantisUsers').append(selectStr);
-	$('#mantisUsers').show();
+	//$('#mantisUsers').show();
 }
 function mantisMonths(result){
 	r=result;

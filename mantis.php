@@ -90,7 +90,7 @@
 			return self::fetchAll($stmt);
 		}
 		public static function getUsers() {
-			$sql="select username , id from mantis_user_table where enabled=1 and access_level>=70 order by username";
+			$sql="(select 'üres' as username ,0 as id from mantis_user_table limit 1) union (select username , id from mantis_user_table where enabled=1 and access_level>=70 order by username)";
 			$stmt = self::query($sql);
 			return self::fetchAll($stmt);
 			
@@ -254,7 +254,7 @@
 		public static function runQuery($filter){
 			$uid = $filter['uid'];
 			$pid = $filter['pid'];
-			$sql = "select id, fixed_in_version,   summary, status, last_updated, platform from mantis_bug_table where handler_id = '$uid' and project_id = '$pid' and status<80 order by last_updated desc limit 30";
+			$sql = "select id, fixed_in_version,   summary, status, last_updated, platform from mantis_bug_table where handler_id in ('$uid') and project_id = '$pid' and status<80 order by last_updated desc limit 30";
 			$stmt = self::query($sql);
 			$rows = self::fetchAll($stmt);
 			//var_dump($rows);
