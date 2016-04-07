@@ -95,6 +95,13 @@
 			return self::fetchAll($stmt);
 			
 		}
+		public static function getReporters($params) {
+            $pid = $params['pid'];
+			$sql="select username , id from mantis_user_table inner join mantis_project_user_list_table on id = user_id where enabled=1 and project_id = $pid order by username";
+			$stmt = self::query($sql);
+			return self::fetchAll($stmt);
+			
+		}        
 		public static function getMonths() {
 			$sql="select version from mantis_project_version_table where version not in ('X','Y') order by version desc limit 4";
 			//$stmt = self::$db->query($sql);
@@ -107,6 +114,7 @@
 			$sessionid = uniqid();
 			$uid = $params['uid'];
 			$pid = $params['pid'];
+            $rid = $params['rid'];
 			$desc = $params['desc'];
 			//echo mb_detect_encoding($desc);
 			$ver = $params['month'];
@@ -125,7 +133,7 @@
 
 
 			$sql = " insert into mantis_bug_table (fixed_in_version,summary,status,handler_id,reporter_id,project_id,last_updated,date_submitted,severity,bug_text_id,platform,os)";
-			$sql.=" values ('$ver','$desc','$status','$uid','$uid','$pid',now(),now(),$severity,$btid,'$durhm','$sessionid') ";
+			$sql.=" values ('$ver','$desc','$status','$uid','$rid','$pid',now(),now(),$severity,$btid,'$durhm','$sessionid') ";
 			
 			$stmt = self::query($sql);
 			$bid = self::$db->lastInsertId();

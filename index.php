@@ -107,6 +107,9 @@
 		case 'mantisPartners':
 			echo json_encode($mantis->getPartners());
 			break;
+		case 'mantisReporters':
+			echo json_encode($mantis->getReporters($r));
+			break;
 		case 'mantisUsers':
 			echo json_encode($mantis->getUsers());
 			break;

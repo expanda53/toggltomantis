@@ -79,6 +79,7 @@ button {
 }
 #divmantistabs {
 	width:600px;
+    float:left;
 }
 .tabactive {
 	background-color:lightgreen;
@@ -179,4 +180,15 @@ button {
 }
 .mantistask:hover {
 	background-color:#f0f0f0;
+}
+.divmantisitem {
+    float:left;
+    margin:10px;
+    
+}
+.divmantisitem select {
+    margin:0px;
+}
+.divitemlabel {
+    
 }

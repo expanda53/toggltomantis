@@ -59,7 +59,8 @@ function showMain(){
 
 			$('#togglUsers').hide();
 			$('#togglProjects').hide();
-			$('#mantisUsers').hide();
+			$('#divmantisusers').hide();
+			$('#divmantisreporters').hide();            
 			$('#mantisPartners').hide();
 			$('#mantisMonths').hide();
 			fn='togglUsers';
@@ -113,7 +114,8 @@ function showMain(){
 					$('#begybestart').click(function(){
 						mantis_newbug_with_note();
 					});
-                    $('#mantisUsers').hide();                    
+                    $('#divmantisusers').hide();
+                    $('#divmantisreporters').show();
 					$('#divmantiskulon').trigger('click');
 				});
 			
@@ -129,7 +131,8 @@ function showMain(){
 					$('#divmantisuj').addClass('tabinactive');
 					$('#divmantisuj').removeClass('tabactive');
 					$('#divmantisregi').removeClass('tabinactive');
-                    $('#mantisUsers').show();
+                    $('#divmantisusers').show();
+                    $('#divmantisreporters').hide();
 					$('#bmantisquery').click(function(){
 						mantisQuery();
 					});					
@@ -147,6 +150,7 @@ function mantis_newbug (){
 				//uid = $('#mantisUsers').val();
                 uid = currentMantisUId;
 				pid = $('#mantisPartners').val();
+                rid = $('#mantisReporters').val();
 				month = $('#mantisMonths').val();
 
 				$('#divtogglfilterresult input:checkbox:checked').each(function(){
@@ -155,7 +159,7 @@ function mantis_newbug (){
 					start = $(this).attr('start');
 					taskdesc = $('#desc'+taskid).html();
 					togglPar = {'taskId':taskid};
-					mantisPar = {'uid':uid,'pid':pid,'desc':taskdesc,'durms':durationms,'start':start,'month':month,'note':''};
+					mantisPar = {'uid':uid,'pid':pid,'rid':rid,'desc':taskdesc,'durms':durationms,'start':start,'month':month,'note':''};
 					ajaxCall(fn,{'togglPar':togglPar,'mantisPar':mantisPar},true, fn);
 				});
 
@@ -169,6 +173,7 @@ function mantis_newbug_with_note (){
 				//uid = $('#mantisUsers').val();
                 uid = currentMantisUId;
 				pid = $('#mantisPartners').val();
+                rid = $('#mantisReporters').val();
 				month = $('#mantisMonths').val();
 				mantisDesc = $('#mantisDesc').val();
 				start="";
@@ -193,7 +198,7 @@ function mantis_newbug_with_note (){
 					noteToggl += $('#desc'+taskid).html()+"\n";
 					taskIds += taskid+ "\n";
 				});
-				mantisPar = {'uid':uid,'pid':pid,'desc':mantisDesc,'durms':durationms,'start':start,'month':month,'note':note};
+				mantisPar = {'uid':uid,'pid':pid,'rid':rid,'desc':mantisDesc,'durms':durationms,'start':start,'month':month,'note':note};
 				togglPar = {'taskIds':taskIds,'togglDesc':noteToggl};
 				ajaxCall(fn,{'togglPar':togglPar,'mantisPar':mantisPar},true, fn);
 }
@@ -259,6 +264,7 @@ function togglUsers(result){
             mantisUId =  users[togglUId];
             $('#mantisUsers').val(mantisUId);
             currentMantisUId = mantisUId;
+            $('#mantisReporters').val(currentMantisUId);
     })
 	sortSelect('togglUsers');
 	$('#togglUsers').show();
@@ -350,6 +356,10 @@ function mantisPartners(result){
 		mantisPId = $(this).val();
 		fn='projectAssignCheck';
 		ajaxCall(fn,{'togglPId':togglPId,'mantisPId':mantisPId},true, fn);
+        
+        fn='mantisReporters';
+        ajaxCall(fn,{'pid':mantisPId},true, fn);
+        
 	})
 }
 
@@ -368,6 +378,10 @@ function projectAssignCheck (result) {
 function projectAssignCheckToggl (result) {
 	if (result!='') {
 			$('#mantisPartners').val(result[0].rcount);
+            fn='mantisReporters';
+            pid = $('#mantisPartners').val();
+            ajaxCall(fn,{'pid':pid},true, fn);
+
 	}
 }
 
@@ -384,6 +398,19 @@ function mantisUsers(result){
 		//alert(JSON.stringify(res));
 	}
 	$('#mantisUsers').append(selectStr);
+	//$('#mantisUsers').show();
+}
+function mantisReporters(result){
+    $('#mantisReporters').empty();
+	r=result;
+	selectStr = "";
+	for (var i = 0;i < r.length;i++){
+		res = r[i];
+		selectStr += "<option value='"+res.id+"'>"+res.username+"</option>";
+		//alert(JSON.stringify(res));
+	}
+	$('#mantisReporters').append(selectStr);
+    $('#mantisReporters').val(currentMantisUId);
 	//$('#mantisUsers').show();
 }
 function mantisMonths(result){

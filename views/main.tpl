@@ -12,10 +12,25 @@
 	<div id=divmantis>
 		Mantis hiba bejelentés
 		<div id=divmantisfilter>
-			<select id=mantisUsers></select>
-			<select id=mantisPartners></select>
-			<select id=mantisMonths></select>
-			<span id=spanDateNeeded><input type=checkbox id=cbDateNeeded>Felírás dátummal</span>
+            <div class=divmantisitem id=divmantisusers>
+                <div class='divitemlabel'>Felelős</div>
+                <select id=mantisUsers></select>
+            </div>
+            <div class=divmantisitem>
+                <div class='divitemlabel'>Partner</div>
+                <select id=mantisPartners></select>
+            </div>
+            <div class=divmantisitem id=divmantisreporters>
+                <div class='divitemlabel'>Bejelentő</div>
+                <select id=mantisReporters></select>
+            </div>
+			<div class=divmantisitem>
+                <div class='divitemlabel'>Időszak</div>
+                <select id=mantisMonths></select>
+            </div>
+            <div class=divmantisitem>
+                <span id=spanDateNeeded><input type=checkbox id=cbDateNeeded>Felírás dátummal</span>
+            </div>
 		</div>
 		<div id=divmantistabs>
 			<div class='divmantistab' id=divmantisuj>Új bejelentés írása</div>
