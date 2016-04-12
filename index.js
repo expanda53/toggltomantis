@@ -63,6 +63,26 @@ function showMain(){
 			$('#divmantisreporters').hide();            
 			$('#mantisPartners').hide();
 			$('#mantisMonths').hide();
+            $('#cbOnlyTime').bind('click',function(){
+                if ($(this).prop('checked')) {
+                    $('#cbDateNeeded').prop('checked',false);
+                    $('#cbDateNeeded').attr('disabled',true);
+                }
+                else {
+                    $('#cbDateNeeded').removeAttr('disabled');
+                }
+                    
+            });
+            $('#cbDateNeeded').bind('click',function(){
+                if ($(this).prop('checked')) {
+                    $('#cbOnlyTime').prop('checked',false);
+                    $('#cbOnlyTime').attr('disabled',true);
+                }
+                else {
+                    $('#cbOnlyTime').removeAttr('disabled');
+                }
+                    
+            });            
 			fn='togglUsers';
 			ajaxCall(fn,{},true, fn);
 			fn='togglProjects';
@@ -91,7 +111,8 @@ function showMain(){
 					$('#divmantisregi').removeClass('tabactive');
 					$('#divmantisuj').removeClass('tabinactive');
 					$('#divmantiskulon').click(function(){
-						$('#spanDateNeeded').hide();
+						$('#divDateNeeded').hide();
+                        $('#divOnlyTime').hide();
 						$('#divmantiskulon').addClass('tabactive');
 						$('#divmantiskulon').removeClass('tabinactive');
 						$('#divmantisegybe').addClass('tabinactive');
@@ -100,7 +121,8 @@ function showMain(){
 						$('#divsubcontent1').show();
 					});
 					$('#divmantisegybe').click(function(){
-						$('#spanDateNeeded').show();
+						$('#divDateNeeded').show();
+                        $('#divOnlyTime').show();
 						$('#divmantisegybe').addClass('tabactive');
 						$('#divmantisegybe').removeClass('tabinactive');
 						$('#divmantiskulon').addClass('tabinactive');
@@ -126,7 +148,8 @@ function showMain(){
 				$.get( "views/mantis_old.tpl", function( data ) { 
 					tpl = data; 
 					$('.divtabcontent').html(tpl);
-					$('#spanDateNeeded').show();
+					$('#divDateNeeded').show();
+                    $('#divOnlyTime').show();
 					$('#divmantisregi').addClass('tabactive');
 					$('#divmantisuj').addClass('tabinactive');
 					$('#divmantisuj').removeClass('tabactive');
@@ -195,6 +218,10 @@ function mantis_newbug_with_note (){
 						note += $('#desc'+taskid).html()+"\n";
 					}
 
+					if ($('#cbOnlyTime').prop('checked')) {
+						note = "";
+					}
+
 					noteToggl += $('#desc'+taskid).html()+"\n";
 					taskIds += taskid+ "\n";
 				});
@@ -225,6 +252,9 @@ function mantisUpdate(mantisId,mantisHM){
 					}
 					else {
 						note += $('#desc'+taskid).html()+"\n";
+					}
+					if ($('#cbOnlyTime').prop('checked')) {
+						note = "";
 					}
 					noteToggl += $('#desc'+taskid).html()+"\n";
 					taskIds += taskid+ "\n";

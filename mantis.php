@@ -249,7 +249,7 @@
 					
 				}
 			}
-			if ($sql!=""){ 
+			if ($sql!="" && $note!=''){ 
 				$stmt = self::query($sql);
 				//megoldás frissítve
 				$sql = "insert into mantis_bug_history_table (date_modified,user_id,bug_id,field_name,old_value,new_value,type)";

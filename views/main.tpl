@@ -29,7 +29,8 @@
                 <select id=mantisMonths></select>
             </div>
             <div class=divmantisitem>
-                <span id=spanDateNeeded><input type=checkbox id=cbDateNeeded>Felírás dátummal</span>
+                <div id=divDateNeeded><input type=checkbox id=cbDateNeeded>Felírás dátummal</div>
+                <div id=divOnlyTime><input type=checkbox id=cbOnlyTime>Csak idő felírása</div>
             </div>
 		</div>
 		<div id=divmantistabs>
