@@ -61,7 +61,7 @@ button {
 	margin-left:10px;
 	padding:10px;
 	width:600px;
-	height:300px;
+	min-height:360px;
 	float:left;
 	
 	vertical-align: baseline;
@@ -177,10 +177,26 @@ button {
 	min-height:22px;
 	line-height:22px;
 	cursor:pointer;
+    background-color:#c8c8ff;
 }
 .mantistask:hover {
-	background-color:#f0f0f0;
+	background-color:#e6e6f8;
 }
+
+.mantistaskSolved{
+	padding:10px 5px;
+	margin:5px 0px;
+	border-bottom: 1px solid #e6e6e6;
+	width: inherited;
+	min-height:22px;
+	line-height:22px;
+	cursor:pointer;
+    background-color:#cceedd
+}
+.mantistaskSolved:hover {
+	background-color:#e8f3ed;
+}
+
 .divmantisitem {
     float:left;
     margin:10px;
@@ -193,6 +209,9 @@ button {
     
 }
 #divDateNeeded{
+
+}
+#divDurationNeeded{
 
 }
 #divOnlyTime{

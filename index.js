@@ -6,7 +6,7 @@ var users={
        1528571:6 /* nazs */
 }
 var currentMantisUId = 0;
-
+jQuery.fn.reverse = [].reverse;
 $.ajaxSetup({ cache: false });
 function ajaxCall( func, d,asyn,fn) {
   var res;
@@ -67,9 +67,12 @@ function showMain(){
                 if ($(this).prop('checked')) {
                     $('#cbDateNeeded').prop('checked',false);
                     $('#cbDateNeeded').attr('disabled',true);
+                    $('#cbDurationNeeded').prop('checked',false);
+                    $('#cbDurationNeeded').attr('disabled',true);
                 }
                 else {
                     $('#cbDateNeeded').removeAttr('disabled');
+                    $('#cbDurationNeeded').removeAttr('disabled');
                 }
                     
             });
@@ -79,10 +82,22 @@ function showMain(){
                     $('#cbOnlyTime').attr('disabled',true);
                 }
                 else {
+                    $('#cbDurationNeeded').prop('checked',false);
                     $('#cbOnlyTime').removeAttr('disabled');
                 }
                     
             });            
+            $('#cbDurationNeeded').bind('click',function(){
+                if ($(this).prop('checked')) {
+                    $('#cbOnlyTime').prop('checked',false);
+                    $('#cbOnlyTime').attr('disabled',true);
+                    $('#cbDateNeeded').prop('checked',true);
+                }
+                else {
+                    if (!($('#cbDateNeeded').prop('checked'))) $('#cbOnlyTime').removeAttr('disabled');
+                }
+                    
+            });                        
 			fn='togglUsers';
 			ajaxCall(fn,{},true, fn);
 			fn='togglProjects';
@@ -112,6 +127,7 @@ function showMain(){
 					$('#divmantisuj').removeClass('tabinactive');
 					$('#divmantiskulon').click(function(){
 						$('#divDateNeeded').hide();
+                        $('#divDurationNeeded').hide();
                         $('#divOnlyTime').hide();
 						$('#divmantiskulon').addClass('tabactive');
 						$('#divmantiskulon').removeClass('tabinactive');
@@ -122,6 +138,7 @@ function showMain(){
 					});
 					$('#divmantisegybe').click(function(){
 						$('#divDateNeeded').show();
+                        $('#divDurationNeeded').show();
                         $('#divOnlyTime').show();
 						$('#divmantisegybe').addClass('tabactive');
 						$('#divmantisegybe').removeClass('tabinactive');
@@ -149,6 +166,7 @@ function showMain(){
 					tpl = data; 
 					$('.divtabcontent').html(tpl);
 					$('#divDateNeeded').show();
+                    $('#divDurationNeeded').show();
                     $('#divOnlyTime').show();
 					$('#divmantisregi').addClass('tabactive');
 					$('#divmantisuj').addClass('tabinactive');
@@ -176,7 +194,7 @@ function mantis_newbug (){
                 rid = $('#mantisReporters').val();
 				month = $('#mantisMonths').val();
 
-				$('#divtogglfilterresult input:checkbox:checked').each(function(){
+				$('#divtogglfilterresult input:checkbox:checked').reverse().each(function(){
 					taskid = $(this).attr('taskid');
 					durationms = $(this).attr('durationms');
 					start = $(this).attr('start');
@@ -204,15 +222,18 @@ function mantis_newbug_with_note (){
 				note = "";
 				taskIds ="";
 				noteToggl="";
-				$('#divtogglfilterresult input:checkbox:checked').each(function(){
+				$('#divtogglfilterresult input:checkbox:checked').reverse().each(function(){
 					taskid = $(this).attr('taskid');
 					curdur = $(this).attr('durationms');
 					durationms = durationms + parseInt(curdur);
 					s = $(this).attr('start');
 					if (start=="") start = s;
-					//note += s+": "+$('#desc'+taskid).html()+" ("+mstoHM(curdur)+")\n";
 					if ($('#cbDateNeeded').prop('checked')) {
-						note += s+": "+$('#desc'+taskid).html()+"\n";
+						note += s+": "+$('#desc'+taskid).html();
+                        if ($('#cbDurationNeeded').prop('checked')) {
+                            note += " ("+mstoHM(curdur)+")";
+                        }
+                        note += "\n";
 					}
 					else {
 						note += $('#desc'+taskid).html()+"\n";
@@ -240,15 +261,19 @@ function mantisUpdate(mantisId,mantisHM){
 				note = "";
 				taskIds ="";
 				noteToggl="";
-				$('#divtogglfilterresult input:checkbox:checked').each(function(){
+				$('#divtogglfilterresult input:checkbox:checked').reverse().each(function(){
 					taskid = $(this).attr('taskid');
 					curdur = $(this).attr('durationms');
 					durationms = durationms + parseInt(curdur);
 					s = $(this).attr('start');
 					if (start=="") start = s;
-					//note += s+": "+$('#desc'+taskid).html()+" ("+mstoHM(curdur)+")\n";
 					if ($('#cbDateNeeded').prop('checked')) {
-						note += s+": "+$('#desc'+taskid).html()+"\n";
+						note += s+": "+$('#desc'+taskid).html();
+                        if ($('#cbDurationNeeded').prop('checked')) {
+                            note += " ("+mstoHM(curdur)+")";
+                        }
+                        note += "\n";
+                        
 					}
 					else {
 						note += $('#desc'+taskid).html()+"\n";
@@ -318,6 +343,10 @@ function togglProjects(result){
 		togglPId =  $(this).val();
 		fn='projectAssignCheck';
 		ajaxCall(fn,{'togglPId':togglPId,'mantisPId':-1},true, fn+'Toggl');
+        $('#divmantisresult').empty();
+        $('#mantisDesc').val("");
+        $('#mantisUsers').val(-1);
+
 	})
 	$('#togglProjects').trigger('change');
 	
@@ -424,7 +453,9 @@ function mantisUsers(result){
 	selectStr = "";
 	for (var i = 0;i < r.length;i++){
 		res = r[i];
-		selectStr += "<option value='"+res.id+"'>"+res.username+"</option>";
+		selectStr += "<option value='"+res.id+"'";
+        if (res.id==-1) selectStr += " selected ";
+        selectStr +=">"+res.username +"</option>";
 		//alert(JSON.stringify(res));
 	}
 	$('#mantisUsers').append(selectStr);
@@ -467,9 +498,12 @@ function mantisQueryResult(result){
 	selectStr="";
 	for (var i = 0;i < result.length;i++){
 		res = result[i];
-		selectStr += "<div class='mantistask' mantishm='"+res.platform+"' mantisid="+res.id+">";
+        statusClass = "mantistask";
+        if (res.status==80) statusClass = "mantistaskSolved";
+		selectStr += "<div class='"+statusClass+"' mantishm='"+res.platform+"' mantisid="+res.id+">";
 		selectStr += "<span>["+res.id+"] "+res.last_updated+" : "+res.summary;
 		if (res.fixed_in_version!="") selectStr += " ("+res.fixed_in_version+") ";
+        if (res.platform!="") selectStr += " ["+res.platform+"] ";
 		selectStr +=" </span>"
 		selectStr += "</div>";
 	}

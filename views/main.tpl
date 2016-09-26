@@ -30,7 +30,8 @@
             </div>
             <div class=divmantisitem>
                 <div id=divDateNeeded><input type=checkbox id=cbDateNeeded>Felírás dátummal</div>
-                <div id=divOnlyTime><input type=checkbox id=cbOnlyTime>Csak idő felírása</div>
+                <div id=divDurationNeeded><input type=checkbox id=cbDurationNeeded>Ráfordított idő</div>
+                <div id=divOnlyTime><input type=checkbox id=cbOnlyTime>Csak idő módosítása</div>
             </div>
 		</div>
 		<div id=divmantistabs>

@@ -90,7 +90,7 @@
 			return self::fetchAll($stmt);
 		}
 		public static function getUsers() {
-			$sql="(select 'üres' as username ,0 as id from mantis_user_table limit 1) union (select username , id from mantis_user_table where enabled=1 and access_level>=70 order by username)";
+			$sql="(select 'Mind' as username ,-1 as id from mantis_user_table limit 1) union (select 'üres' as username ,0 as id from mantis_user_table limit 1) union (select username , id from mantis_user_table where enabled=1 and access_level>=70 order by username)";
 			$stmt = self::query($sql);
 			return self::fetchAll($stmt);
 			
@@ -120,6 +120,7 @@
 			$ver = $params['month'];
 			$durms = $params['durms'];
 			$durhm = self::mstoHM($durms);
+            $start = $params['start'];
 			$status='50';
 			$severity='10';
 			$sql = " insert into mantis_bug_text_table (description )";
@@ -133,7 +134,7 @@
 
 
 			$sql = " insert into mantis_bug_table (fixed_in_version,summary,status,handler_id,reporter_id,project_id,last_updated,date_submitted,severity,bug_text_id,platform,os)";
-			$sql.=" values ('$ver','$desc','$status','$uid','$rid','$pid',now(),now(),$severity,$btid,'$durhm','$sessionid') ";
+			$sql.=" values ('$ver','$desc','$status','$uid','$rid','$pid',now(),'$start',$severity,$btid,'$durhm','$sessionid') ";
 			
 			$stmt = self::query($sql);
 			$bid = self::$db->lastInsertId();
@@ -262,7 +263,16 @@
 		public static function runQuery($filter){
 			$uid = $filter['uid'];
 			$pid = $filter['pid'];
-			$sql = "select id, fixed_in_version,   summary, status, last_updated, platform from mantis_bug_table where handler_id in ('$uid') and project_id = '$pid' and status<80 order by last_updated desc limit 30";
+            $uidStr = "";
+            if ($uid!='-1') {
+                $uidStr = "handler_id in ('$uid') and ";
+                $summaryStr = "summary";
+            }
+            else {
+                $summaryStr = "concat(summary,' @',coalesce(mantis_user_table.username,'Üres')) as summary";
+                
+            }
+			$sql = "select mantis_bug_table.id, fixed_in_version,   $summaryStr , status, last_updated, platform from mantis_bug_table left join mantis_user_table on mantis_user_table.id = mantis_bug_table.handler_id where $uidStr project_id = '$pid' and status<81 order by last_updated desc limit 30";
 			$stmt = self::query($sql);
 			$rows = self::fetchAll($stmt);
 			//var_dump($rows);
