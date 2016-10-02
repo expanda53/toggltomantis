@@ -169,28 +169,30 @@ button {
     left: -26px;
     padding: 10px;	
 }
-.mantistask{
+.mantistask,.mantistaskUnassigned,.mantistaskSolved {
 	padding:10px 5px;
 	margin:5px 0px;
 	border-bottom: 1px solid #e6e6e6;
 	width: inherited;
 	min-height:22px;
 	line-height:22px;
-	cursor:pointer;
+	cursor:pointer;    
+}
+.mantistask{
     background-color:#c8c8ff;
 }
 .mantistask:hover {
 	background-color:#e6e6f8;
 }
 
+.mantistaskUnassigned {
+    background-color:#ffa0a0;
+}
+.mantistaskUnassigned:hover {
+	background-color:#fde2e2;
+}
+
 .mantistaskSolved{
-	padding:10px 5px;
-	margin:5px 0px;
-	border-bottom: 1px solid #e6e6e6;
-	width: inherited;
-	min-height:22px;
-	line-height:22px;
-	cursor:pointer;
     background-color:#cceedd
 }
 .mantistaskSolved:hover {

@@ -500,6 +500,8 @@ function mantisQueryResult(result){
 		res = result[i];
         statusClass = "mantistask";
         if (res.status==80) statusClass = "mantistaskSolved";
+        else
+        if (res.status==10) statusClass = "mantistaskUnassigned";
 		selectStr += "<div class='"+statusClass+"' mantishm='"+res.platform+"' mantisid="+res.id+">";
 		selectStr += "<span>["+res.id+"] "+res.last_updated+" : "+res.summary;
 		if (res.fixed_in_version!="") selectStr += " ("+res.fixed_in_version+") ";
