@@ -510,7 +510,7 @@ function mantisQueryResult(result){
 		selectStr += "</div>";
 	}
 	$('#divmantisresult').html(selectStr);
-	$('.mantistask').click(function(){
+	$('.mantistaskSolved, .mantistask, .mantistaskUnassigned').click(function(){
 		mantisId = $(this).attr('mantisid');
 		mantisHM = $(this).attr('mantishm');
 		mantisDesc = $(this).text();

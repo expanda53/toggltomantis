@@ -170,7 +170,7 @@ button {
     padding: 10px;	
 }
 .mantistask,.mantistaskUnassigned,.mantistaskSolved {
-	padding:10px 5px;
+	padding:5px 5px;
 	margin:5px 0px;
 	border-bottom: 1px solid #e6e6e6;
 	width: inherited;

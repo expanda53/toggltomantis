@@ -272,7 +272,7 @@
                 $summaryStr = "concat(summary,' @',coalesce(mantis_user_table.username,'Üres')) as summary";
                 
             }
-			$sql = "select mantis_bug_table.id, fixed_in_version,   $summaryStr , status, last_updated, platform from mantis_bug_table left join mantis_user_table on mantis_user_table.id = mantis_bug_table.handler_id where $uidStr project_id = '$pid' and status<81 order by last_updated desc limit 30";
+			$sql = "select mantis_bug_table.id, fixed_in_version,   $summaryStr , status, last_updated, platform from mantis_bug_table left join mantis_user_table on mantis_user_table.id = mantis_bug_table.handler_id where $uidStr project_id = '$pid' and status<81 order by last_updated desc /*limit 30*/";
 			$stmt = self::query($sql);
 			$rows = self::fetchAll($stmt);
 			//var_dump($rows);
