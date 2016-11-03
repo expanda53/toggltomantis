@@ -193,16 +193,24 @@ function mantis_newbug (){
 				pid = $('#mantisPartners').val();
                 rid = $('#mantisReporters').val();
 				month = $('#mantisMonths').val();
-
-				$('#divtogglfilterresult input:checkbox:checked').reverse().each(function(){
-					taskid = $(this).attr('taskid');
-					durationms = $(this).attr('durationms');
-					start = $(this).attr('start');
-					taskdesc = $('#desc'+taskid).html();
-					togglPar = {'taskId':taskid};
-					mantisPar = {'uid':uid,'pid':pid,'rid':rid,'desc':taskdesc,'durms':durationms,'start':start,'month':month,'note':''};
-					ajaxCall(fn,{'togglPar':togglPar,'mantisPar':mantisPar},true, fn);
-				});
+                selected_count = $('#divtogglfilterresult input:checkbox:checked').length; 
+                var mehet=false;
+                mehet = (selected_count==1);
+                if (selected_count>1) {
+                	mehet = confirm(selected_count + " db különálló bejelentés fog a Mantisba kerülni. Folytatod?");
+                }
+                
+				if (mehet) {
+                    $('#divtogglfilterresult input:checkbox:checked').reverse().each(function(){
+                        taskid = $(this).attr('taskid');
+                        durationms = $(this).attr('durationms');
+                        start = $(this).attr('start');
+                        taskdesc = $('#desc'+taskid).html();
+                        togglPar = {'taskId':taskid};
+                        mantisPar = {'uid':uid,'pid':pid,'rid':rid,'desc':taskdesc,'durms':durationms,'start':start,'month':month,'note':''};
+                        ajaxCall(fn,{'togglPar':togglPar,'mantisPar':mantisPar},true, fn);
+                    });
+                }
 
 				
 			
