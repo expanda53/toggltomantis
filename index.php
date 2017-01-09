@@ -36,7 +36,7 @@
 			$uid = $r['userId'];
 			$pid = $r['projectId'];
 			$until = $r['until'];
-			$filter = array('user_ids'=>$uid,'since'=>'2016-01-01','user_agent'=>'togglToMantis','project_ids'=>$pid,'until'=>$until);
+			$filter = array('user_ids'=>$uid,'since'=>'2016-12-01','user_agent'=>'togglToMantis','project_ids'=>$pid,'until'=>$until);
 			echo json_encode($toggl->getTasks($filter));
 			break;
 		case 'Insert':
