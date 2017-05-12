@@ -97,7 +97,8 @@
 		}
 		public static function getReporters($params) {
             $pid = $params['pid'];
-			$sql="select username , id from mantis_user_table inner join mantis_project_user_list_table on id = user_id where enabled=1 and project_id = $pid order by username";
+			$sql="select username , id from mantis_user_table inner join mantis_project_user_list_table on id = user_id where enabled=1 and project_id = $pid ";
+            $sql.=" union select username,id from mantis_user_table where enabled=1 and id in (6,7,8,9,11) order by username";
 			$stmt = self::query($sql);
 			return self::fetchAll($stmt);
 			
