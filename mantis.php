@@ -233,12 +233,14 @@
 			//var_dump($q[0]);
 			if ($q[0]['id']=='') {
 				//ez az ag elvileg sosem futhat, mert a description mar ki van toltve az insertTask-nal. Kozvetlen mantis felvitelnel meg ugysem engedi addig lezarni, amig nincs leiras, tehat az id mar ott is adott.
+                /*
 				$note=trim($note);
 				$note = stripcslashes($note);
 				$sql="insert into mantis_bug_text_table (additional_information) values ('$note')";
 				$stmt = self::query($sql);
 				$btid =  self::$db->lastInsertId();
 				$sql="update mantis_bug_table set bug_text_id = '$btid'";
+                */
 				
 			}
 			else {
